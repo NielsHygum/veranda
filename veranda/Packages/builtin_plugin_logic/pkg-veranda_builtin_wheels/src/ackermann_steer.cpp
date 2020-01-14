@@ -250,7 +250,7 @@ void Ackermann_Steer::_connectChannels()
             {
                 _receiveMessage(msg);
             };
-            _receiveChannel = _rosNode->create_subscription<std_msgs::msg::Float32>(inputChannel.toStdString(), callback);
+            _receiveChannel = _rosNode->create_subscription<std_msgs::msg::Float32>(inputChannel.toStdString(), 10, callback);
         }
     }
 }

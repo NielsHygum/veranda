@@ -154,7 +154,7 @@ void Omni_Drive::_connectChannels()
                     _receiveMessage(msg);
                 };
 
-                _receiveChannel = _rosNode->create_subscription<geometry_msgs::msg::Pose2D>(inputChannel.toStdString(), callback);
+                _receiveChannel = _rosNode->create_subscription<geometry_msgs::msg::Pose2D>(inputChannel.toStdString(), 10, callback);
 
                 //qDebug() << "Channel: " << inputChannel << " created: " << _receiveChannel.get();
             }
@@ -225,13 +225,13 @@ void Omni_Drive::_worldTicked(const double dt)
             _timeSincePublish = 0;
             if(_publishChannel)
             {
-                auto newMsg = std::make_shared<geometry_msgs::msg::Pose2D>();
+                auto newMsg = std::make_unique<geometry_msgs::msg::Pose2D>();
 
                 newMsg->theta = report_filter.apply() + rotVelocity;
                 newMsg->x = report_filter.apply() + linVelocity.x;
                 newMsg->y = report_filter.apply() + linVelocity.y;
 
-                _publishChannel->publish(newMsg);
+                _publishChannel->publish(std::move(newMsg));
             }
         }
     }

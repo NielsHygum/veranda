@@ -23,7 +23,7 @@ Lidar_Sensor::Lidar_Sensor(const QString& pluginIID, QObject *parent)
     registerModel(sensor_model);
     registerModel(scan_model);
 
-    data = std::make_shared<sensor_msgs::msg::LaserScan>();
+    data = std::make_unique<sensor_msgs::msg::LaserScan>();
 
     //Instantaneous scan
     data->time_increment = 0;
@@ -245,7 +245,7 @@ void Lidar_Sensor::_worldTicked(const double dt)
 
             if(_sendChannel)
             {
-                _sendChannel->publish(data);
+                _sendChannel->publish(std::move(data));
             }
 
             //Force lines to be redrawn

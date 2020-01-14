@@ -177,7 +177,7 @@ class VERANDA_SENSORS_DLL GPS_Sensor : public WorldObjectComponent
     b2Joint* weldJoint = nullptr;
 
     //! LaserScan message being published
-    std::shared_ptr<geometry_msgs::msg::Pose2D> data;
+    std::unique_ptr<geometry_msgs::msg::Pose2D> data;
 
     //! Time counter
     double _timeSincePublish = 0;

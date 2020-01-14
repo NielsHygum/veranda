@@ -311,3 +311,4 @@ TSWLatexianTemp*
 *.pidb
 *.svclog
 *.scc
+/.metadata/
