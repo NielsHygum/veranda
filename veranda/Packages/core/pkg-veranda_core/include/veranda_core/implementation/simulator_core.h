@@ -72,7 +72,7 @@ class VERANDA_CORE_IMPL_DLL SimulatorCore : public QObject
 
         //! The joystick message being sent
         //        std::shared_ptr<msgType> _message = nullptr;
-        std::unique_ptr<msgType> _message;
+        std::shared_ptr<msgType> _message;
 
         //! The channel this joystick message is sent on
         //        std::shared_ptr<rclcpp::Publisher<msgType>> _channel = nullptr;
@@ -86,7 +86,7 @@ class VERANDA_CORE_IMPL_DLL SimulatorCore : public QObject
     std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float64MultiArray>> _timestampChannel;
 
     //! The most recently published timestamp message
-    std::unique_ptr<std_msgs::msg::Float64MultiArray> _timestampMsg;
+    std::shared_ptr<std_msgs::msg::Float64MultiArray> _timestampMsg;
 
 public:
     /*!

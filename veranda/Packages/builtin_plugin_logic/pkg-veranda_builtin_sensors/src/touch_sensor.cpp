@@ -29,7 +29,7 @@ Touch_Sensor::Touch_Sensor(const QString& pluginIID, QObject *parent)
     registerModel(buttons_model);
     registerModel(touches_model);
 
-    data = std::make_unique<std_msgs::msg::ByteMultiArray>();
+    data = std::make_shared<std_msgs::msg::ByteMultiArray>();
 
     data->layout.data_offset = 0;
     data->layout.dim.push_back(std_msgs::msg::MultiArrayDimension());
@@ -283,7 +283,7 @@ void Touch_Sensor::_worldTicked(const double)
 
         if(anyChange && _sendChannel)
         {
-            _sendChannel->publish(std::move(data));
+            _sendChannel->publish(*data);
         }
     }
 }

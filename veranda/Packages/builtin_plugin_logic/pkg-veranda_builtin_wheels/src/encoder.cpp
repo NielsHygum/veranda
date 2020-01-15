@@ -3,7 +3,7 @@
 
 Encoder::Encoder(QObject *parent) :
     WorldObjectComponent("Encoder", "Sensors", parent),
-    _sendMessage(std::make_unique<std_msgs::msg::Float32>()),
+    _sendMessage(std::make_shared<std_msgs::msg::Float32>()),
 #define pview(a) QSharedPointer<PropertyView>(new PropertyView(a))
     noise_filter(pview(&noise_mu), pview(&noise_sigma), 1.0)
 #undef pview
@@ -84,7 +84,7 @@ void Encoder::_worldTicked(const double dt)
 
             _sendMessage->data = static_cast<float>(angularNoisy);
 
-            _sendChannel->publish(std::move(_sendMessage));
+            _sendChannel->publish(*_sendMessage);
         }
     }
 }

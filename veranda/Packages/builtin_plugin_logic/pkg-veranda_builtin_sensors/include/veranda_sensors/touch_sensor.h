@@ -107,7 +107,7 @@ class VERANDA_SENSORS_DLL Touch_Sensor : public WorldObjectComponent
     b2Joint* weldJoint = nullptr;
 
     //! ByteMultiArray message being published
-    std::unique_ptr<std_msgs::msg::ByteMultiArray> data;
+    std::shared_ptr<std_msgs::msg::ByteMultiArray> data;
 
     //! Set containing the indices of all the buttons currently known to be pressed
     QSet<int> active_touches;
