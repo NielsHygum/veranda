@@ -186,7 +186,7 @@ class VERANDA_SENSORS_DLL Lidar_Sensor : public WorldObjectComponent
     b2Joint* weldJoint = nullptr;
 
     //! LaserScan message being published
-    std::unique_ptr<sensor_msgs::msg::LaserScan> data;
+    std::shared_ptr<sensor_msgs::msg::LaserScan> data;
 
     //! Vector of all ray cast lines that exist
     QVector<b2Shape*> scan_image;
