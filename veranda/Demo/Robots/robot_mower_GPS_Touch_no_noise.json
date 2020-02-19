@@ -272,7 +272,7 @@
                 },
                 {
                     "key": "publish_rate",
-                    "value": 10
+                    "value": 50
                 }
             ]
         },
