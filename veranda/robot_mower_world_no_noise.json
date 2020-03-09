@@ -39294,7 +39294,7 @@
                     },
                     {
                         "key": "density",
-                        "value": 40
+                        "value": 300
                     },
                     {
                         "key": "is_driven",
@@ -39375,7 +39375,7 @@
                     },
                     {
                         "key": "density",
-                        "value": 40
+                        "value": 300
                     },
                     {
                         "key": "is_driven",
@@ -39476,7 +39476,7 @@
                     },
                     {
                         "key": "publish_rate",
-                        "value": 50
+                        "value": 100
                     }
                 ]
             },
