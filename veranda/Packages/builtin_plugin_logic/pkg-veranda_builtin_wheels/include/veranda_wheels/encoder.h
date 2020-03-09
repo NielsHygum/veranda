@@ -23,7 +23,7 @@ class VERANDA_WHEELS_DLL Encoder : public WorldObjectComponent
     //! ROS channel to publish gps messages on
     rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr _sendChannel;
 
-    std::shared_ptr<std_msgs::msg::Float32> _sendMessage;
+    std::unique_ptr<std_msgs::msg::Float32> _sendMessage;
 
     //! Property: ROS channel to publish on
     Property output_channel = Property(PropertyInfo(false, true, false, PropertyInfo::STRING,

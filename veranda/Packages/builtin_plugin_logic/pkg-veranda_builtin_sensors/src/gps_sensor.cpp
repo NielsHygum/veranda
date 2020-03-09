@@ -28,7 +28,7 @@ GPS_Sensor::GPS_Sensor(const QString& pluginIID, QObject *parent)
     registerModel(sensor_model);
     _buildModels();
 
-    data = std::make_shared<geometry_msgs::msg::Pose2D>();
+    data = std::make_unique<geometry_msgs::msg::Pose2D>();
 }
 
 WorldObjectComponent *GPS_Sensor::_clone(QObject *newParent)
@@ -199,7 +199,7 @@ void GPS_Sensor::_worldTicked(const double dt)
 
             if(_sendChannel)
             {
-                _sendChannel->publish(data);
+                _sendChannel->publish(std::move(data));
             }
 
             _timeSincePublish = 0;

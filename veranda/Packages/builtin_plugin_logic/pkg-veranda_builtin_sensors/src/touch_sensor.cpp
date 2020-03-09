@@ -29,7 +29,7 @@ Touch_Sensor::Touch_Sensor(const QString& pluginIID, QObject *parent)
     registerModel(buttons_model);
     registerModel(touches_model);
 
-    data = std::make_shared<std_msgs::msg::ByteMultiArray>();
+    data = std::make_unique<std_msgs::msg::ByteMultiArray>();
 
     data->layout.data_offset = 0;
     data->layout.dim.push_back(std_msgs::msg::MultiArrayDimension());
@@ -205,6 +205,8 @@ void Touch_Sensor::_evaluateContact(b2Contact* c, QVector<int>& newTouches, QSet
     c->GetWorldManifold(&man);
 
     b2Vec2 localCenter = sensorBody->GetLocalCenter();
+    bool result;
+    double temp = angle_start.get().toDouble(&result);
     double angleMin = angle_start.get().toDouble() * DEG2RAD;
     double angleMax = angle_end.get().toDouble() * DEG2RAD;
     double degPerTouch = (angleMax - angleMin) / sensor_count.get().toInt();
@@ -281,7 +283,7 @@ void Touch_Sensor::_worldTicked(const double)
 
         if(anyChange && _sendChannel)
         {
-            _sendChannel->publish(data);
+            _sendChannel->publish(std::move(data));
         }
     }
 }

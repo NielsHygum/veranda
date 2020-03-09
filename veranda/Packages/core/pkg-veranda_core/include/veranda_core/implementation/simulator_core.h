@@ -54,14 +54,29 @@ class VERANDA_CORE_IMPL_DLL SimulatorCore : public QObject
     //! Container for information related to a single joystick's data
     struct joymsg
     {
+        joymsg() {}
+        joymsg(const joymsg &msg)
+        {
+            this->_channel = msg._channel;
+            _message = std::make_unique<msgType>();
+        }
+
+        joymsg& operator=(const joymsg &msg)
+        {
+            this->_channel = msg._channel;
+            _message = std::make_unique<msgType>();
+        }
+
         //! Typedef to shorten joystick message type
         typedef sensor_msgs::msg::Joy msgType;
 
         //! The joystick message being sent
-        std::shared_ptr<msgType> _message = nullptr;
+        //        std::shared_ptr<msgType> _message = nullptr;
+        std::unique_ptr<msgType> _message;
 
         //! The channel this joystick message is sent on
-        std::shared_ptr<rclcpp::Publisher<msgType>> _channel = nullptr;
+        //        std::shared_ptr<rclcpp::Publisher<msgType>> _channel = nullptr;
+        std::shared_ptr<rclcpp::Publisher<msgType>> _channel;
     };
 
     //! Cache of joystick messages
@@ -71,7 +86,7 @@ class VERANDA_CORE_IMPL_DLL SimulatorCore : public QObject
     std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float64MultiArray>> _timestampChannel;
 
     //! The most recently published timestamp message
-    std::shared_ptr<std_msgs::msg::Float64MultiArray> _timestampMsg;
+    std::unique_ptr<std_msgs::msg::Float64MultiArray> _timestampMsg;
 
 public:
     /*!

@@ -56,7 +56,7 @@ _physicsEngine(physics), _userInterface(ui), _node(node)
     connect(this, &SimulatorCore::errorMsg, _userInterface, &Simulator_Ui_If::errorMessage);
 
     //Create and set up timestamp message
-    _timestampMsg = std::make_shared<std_msgs::msg::Float64MultiArray>();
+    _timestampMsg = std::make_unique<std_msgs::msg::Float64MultiArray>();
     _timestampMsg->data.resize(2, 0);
     _timestampMsg->layout.data_offset = 0;
     _timestampMsg->layout.dim.push_back(std_msgs::msg::MultiArrayDimension());
@@ -73,7 +73,7 @@ _physicsEngine(physics), _userInterface(ui), _node(node)
     {
         _timestampMsg->data[0] += elapsed;
         _timestampMsg->data[1] = elapsed;
-        _timestampChannel->publish(_timestampMsg);
+        _timestampChannel->publish(std::move(_timestampMsg));
     });
 }
 
@@ -176,9 +176,10 @@ void SimulatorCore::joystickMoved(double x, double y, double z, QString channel)
     joystick._message->axes[1] = y;
     joystick._message->axes[2] = z;
 
-    if(joystick._channel)
-    {
-        joystick._channel->publish(joystick._message);
+    if (joystick._channel) {
+//        std::unique_ptr<joymsg::msgType> uniqueMessage = std::move(joystick._message);
+        //        joystick._channel->publish(std::move(joystick._message));
+    joystick._channel->publish(std::move(joystick._message));
     }
 }
 
@@ -193,9 +194,8 @@ void SimulatorCore::joystickButtonDown(int button, QString channel)
 
     joystick._message->buttons[button] = 1;
 
-    if(joystick._channel)
-    {
-        joystick._channel->publish(joystick._message);
+    if (joystick._channel) {
+        joystick._channel->publish(std::move(joystick._message));
     }
 }
 
@@ -210,9 +210,8 @@ void SimulatorCore::joystickButtonUp(int button, QString channel)
 
     joystick._message->buttons[button] = 0;
 
-    if(joystick._channel)
-    {
-        joystick._channel->publish(joystick._message);
+    if (joystick._channel) {
+        joystick._channel->publish(std::move(joystick._message));
     }
 }
 
@@ -234,7 +233,7 @@ SimulatorCore::joymsg SimulatorCore::initJoystick(QString channel)
 
     if(!joy._message)
     {
-        joy._message = make_shared<joymsg::msgType>();
+        joy._message = std::make_unique<joymsg::msgType>();
     }
 
     return joy;
