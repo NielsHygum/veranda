@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>veranda_builtin_perception</name>
+  <version>0.0.1</version>
+  <description>Basic Perception Plugins</description>
+
+  <maintainer email="niels.hygum.nielsen@gmail.com">Niels Hygum Nielsen</maintainer>
+
+  <license>TODO</license>
+
+  <depend>veranda_core_api</depend>
+  <depend>veranda_box2d</depend>
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
