@@ -27,3 +27,6 @@
 
 //! The plugin IID for the gps plugin
 #define GPS_IID "org.roboscience.veranda.worldObjectComponent.defaults.gps"
+
+//! The plugin IID for the simple obstacle map plugin
+#define SIMPLEOBSTACLEMAP_IID "org.roboscience.veranda.worldObjectComponent.defaults.simpleobstaclemap"

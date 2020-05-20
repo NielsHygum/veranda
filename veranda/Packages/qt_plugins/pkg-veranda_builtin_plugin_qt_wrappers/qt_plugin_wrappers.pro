@@ -22,6 +22,7 @@ HEADERS += \
     include/omni_drive_plugin.h \
     include/polygon_plugin.h \
     include/rectangle_plugin.h \
+    include/simple_obstacle_map_plugin.h \
     include/touch_sensor_plugin.h
 
 SOURCES += \
@@ -33,4 +34,5 @@ SOURCES += \
     src/omni_drive_plugin.cpp \
     src/polygon_plugin.cpp \
     src/rectangle_plugin.cpp \
+    src/simple_obstacle_map_plugin.cpp \
     src/touch_sensor_plugin.cpp

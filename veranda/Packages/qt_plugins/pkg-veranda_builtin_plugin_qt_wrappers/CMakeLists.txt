@@ -14,6 +14,7 @@ find_package(veranda_core_api REQUIRED)
 find_package(veranda_builtin_sensors REQUIRED)
 find_package(veranda_builtin_wheels REQUIRED)
 find_package(veranda_builtin_shapes REQUIRED)
+find_package(veranda_builtin_perception REQUIRED)
 
 ## Find and configure QT
 set(QT_COMPONENTS Core Gui)
@@ -38,6 +39,7 @@ ament_export_dependencies(
     veranda_builtin_sensors
     veranda_builtin_wheels
     veranda_builtin_shapes
+    veranda_builtin_perception
 )
 
 # Need to include this early so that moc is happy
@@ -46,6 +48,7 @@ include_directories(${veranda_qt_plugin_api_INCLUDE_DIRS})
 include_directories(${veranda_builtin_sensors_INCLUDE_DIRS})
 include_directories(${veranda_builtin_wheels_INCLUDE_DIRS})
 include_directories(${veranda_builtin_shapes_INCLUDE_DIRS})
+include_directories(${veranda_builtin_perception_INCLUDE_DIRS})
 
 ###########################################
 ## Make a plugin from source and headers ##
@@ -121,6 +124,10 @@ make_plugin(rectangle_plugin "${headers}" "${sources}" veranda_builtin_shapes)
 set(headers include/polygon_plugin.h)
 set(sources src/polygon_plugin.cpp)
 make_plugin(polygon_plugin "${headers}" "${sources}" veranda_builtin_shapes)
+
+set(headers include/simple_obstacle_map_plugin.h)
+set(sources src/simple_obstacle_map_plugin.cpp)
+make_plugin(simple_obstacle_map "${headers}" "${sources}" veranda_builtin_perception)
 
 ament_package()
 
