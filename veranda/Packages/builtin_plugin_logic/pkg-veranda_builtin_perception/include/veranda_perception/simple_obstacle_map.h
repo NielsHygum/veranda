@@ -56,7 +56,7 @@ Property map_width = Property(PropertyInfo(false, true, false, PropertyInfo::INT
                                     return _old;
                                 });
 
-//! Property: map width (cells)
+//! Property: map height (cells)
 Property map_height = Property(PropertyInfo(false, true, false, PropertyInfo::INT,
                                            "map height (cells)"), QVariant(10),
                               [](QVariant _old, QVariant _new)
@@ -68,6 +68,18 @@ Property map_height = Property(PropertyInfo(false, true, false, PropertyInfo::IN
                                   return _old;
                               });
 
+//! Property: minimum perception width (meter)
+Property min_perception_width = Property(PropertyInfo(false, true, false, PropertyInfo::DOUBLE,
+                                                "minimum perception width (meter)"), QVariant(0.5),
+                                   &Property::abs_double_validator);
+
+//! Property: minimum perception height (meter)
+Property min_perception_height = Property(PropertyInfo(false, true, false, PropertyInfo::DOUBLE,
+                                                "minimum perception height (meter)"), QVariant(0.5),
+                                   &Property::abs_double_validator);
+
+
+
 #define pview(a) QSharedPointer<PropertyView>(new PropertyView(a))
 //! Mapping of lidar propertys by their identifiers
 QMap<QString, QSharedPointer<PropertyView>> _properties{
@@ -76,7 +88,9 @@ QMap<QString, QSharedPointer<PropertyView>> _properties{
         {"map_rate", pview(&pub_rate)},
         {"map_resolution", pview(&map_resolution)},
         {"map_width", pview(&map_width)},
-        {"map_height", pview(&map_height)}
+        {"map_height", pview(&map_height)},
+        {"min_perception_width", pview(&min_perception_width)},
+        {"min_perception_height", pview(&min_perception_height)}
 };
 #undef pview
 

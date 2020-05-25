@@ -105,10 +105,14 @@ void SimpleObstacleMap::_worldTicked(const double dt)
         {
             setMapHeader();
 
-            int map_cols = map_width.get().toInt();
-            int map_rows = map_height.get().toInt();
+
+            float min_perception_range_x = min_perception_width.get().toDouble();
+            float min_perception_range_y = min_perception_height.get().toDouble();
+            size_t map_cols = map_width.get().toInt();
+            size_t map_rows = map_height.get().toInt();
             float map_width = cell_size_ * map_cols; // in meter
             float map_height = cell_size_ * map_rows; // in meter
+
 
             // map origo is lower left
             float map_origo_body_frame_x = -map_width/2.0f;
@@ -124,36 +128,37 @@ void SimpleObstacleMap::_worldTicked(const double dt)
 
             if(data->data.size() != map_cols*map_rows)
             {
-                std::cerr << "debug: resizing map data array" << std::endl;
                 data->data.resize(map_cols*map_rows);
             }
 
-            for(int row = 0; row < map_rows; row++)
-                for(int col = 0; col < map_cols; col++)
+            for(size_t row = 0; row < map_rows; row++)
+                for(size_t col = 0; col < map_cols; col++)
                 {
                     float cell_center_body_frame_x = map_origo_body_frame_x + (row+0.5f)*cell_size_;
                     float cell_center_body_frame_y = map_origo_body_frame_y + (col+0.5f)*cell_size_;
 
-                    float cell_center_veranda_frame_x = body_position_veranda_frame_x + cell_center_body_frame_x * cos(body_yaw) - cell_center_body_frame_y * sin(body_yaw);
-                    float cell_center_veranda_frame_y = body_position_veranda_frame_y + cell_center_body_frame_x * sin(body_yaw) + cell_center_body_frame_y * cos(body_yaw);
-/*
-                    float cell_body_frame_x_2 = map_origo_body_frame_x + (row+1)*cell_size_;
-                    float cell_body_frame_y_2 = map_origo_body_frame_y + (col+1)*cell_size_;
+                    if((fabs(cell_center_body_frame_x) <= min_perception_range_x) and (fabs(cell_center_body_frame_y) <= min_perception_range_y))
+                    {
 
-                    float cell_veranda_frame_x_2 = body_position_veranda_frame_x + cell_body_frame_x_2 * cos(body_yaw) - cell_body_frame_y_2 * sin(body_yaw);
-                    float cell_veranda_frame_y_2 = body_position_veranda_frame_y + cell_body_frame_x_2 * sin(body_yaw) + cell_body_frame_y_2 * cos(body_yaw);
-*/
-                    b2Vec2 cell_center(cell_center_veranda_frame_x, cell_center_veranda_frame_y);
-//                    b2Vec2 cell_ur(cell_veranda_frame_x_2, cell_veranda_frame_y_2);
+                        data->data[col*map_cols+row] = 0;
 
-                    b2AABB area_of_collision;
-                    area_of_collision.lowerBound = cell_center;
-                    //area_of_collision.upperBound = cell_ur;
-                    area_of_collision.upperBound = cell_center;
-                    bool cell_collision = querry_callback_.hasCollision(_world, area_of_collision);
+                    } else {
 
-                    //data->data[row*map_rows+col] = cell_collision? 100 : 0;
-                    data->data[col*map_cols+row] = cell_collision? 100 : 0;
+                        float cell_center_veranda_frame_x = body_position_veranda_frame_x + cell_center_body_frame_x * cos(body_yaw) - cell_center_body_frame_y * sin(body_yaw);
+                        float cell_center_veranda_frame_y = body_position_veranda_frame_y + cell_center_body_frame_x * sin(body_yaw) + cell_center_body_frame_y * cos(body_yaw);
+
+                        b2Vec2 cell_center(cell_center_veranda_frame_x, cell_center_veranda_frame_y);
+
+                        b2AABB area_of_collision;
+                        area_of_collision.lowerBound = cell_center;
+                        area_of_collision.upperBound = cell_center;
+
+                        bool cell_collision = querry_callback_.hasCollision(_world, area_of_collision);
+
+                        data->data[col*map_cols+row] = cell_collision? 100 : 0;
+                    }
+
+
 
                 }
 
