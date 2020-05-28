@@ -13,7 +13,6 @@ find_package(veranda_box2d REQUIRED)
 find_package(veranda_core_api REQUIRED)
 find_package(veranda_qt_frontend_plugin_api REQUIRED)
 find_package(rclcpp REQUIRED)
-
 ## Find and configure QT
 find_package(Qt5 REQUIRED COMPONENTS
   Core

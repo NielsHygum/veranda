@@ -38,7 +38,6 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <ament_index_cpp/get_package_prefix.hpp>
 #include <ament_index_cpp/get_resource.hpp>
-
 using namespace std;
 
 int main(int argc, char** argv)
@@ -108,6 +107,8 @@ int main(int argc, char** argv)
     QVector<WorldSaver_If*> worldSavers;
     WorldLoader_If* defaultLoader = nullptr;
 
+    WorldFileHandler_Plugin_If* image_loader_plugin = nullptr;
+
     QPluginLoader plugLoader;
 
     //Minor hack which relies on the build output file structure to find plugins
@@ -139,7 +140,7 @@ int main(int argc, char** argv)
             }
             else if(qobject_cast<WorldObjectComponent_Plugin_If*>(plugin))
             {
-                qInfo() << "Component Plugin Accepted";
+                qInfo() << "Component Plugin Accepted with iid = " << iid;
                 componentPlugins[iid] = qobject_cast<WorldObjectComponent_Plugin_If*>(plugin);
             }
             else if(qobject_cast<WorldObjectFileHandler_Plugin_If*>(plugin))
@@ -151,10 +152,16 @@ int main(int argc, char** argv)
             }
             else if(qobject_cast<WorldFileHandler_Plugin_If*>(plugin))
             {
-                qInfo() << "World Filehandler Plugin Accepted";
+                qInfo() << "World Filehandler Plugin Accepted with iid = " << iid;
                 WorldFileHandler_Plugin_If* p = qobject_cast<WorldFileHandler_Plugin_If*>(plugin);
                 worldLoaders += p->getLoaders();
                 worldSavers += p->getSavers();
+
+                if(iid == "org.roboscience.veranda.fileHandlers.imageLoader")
+                {
+                    std::cerr << "found image plugin" << std::endl;
+                    image_loader_plugin = qobject_cast<WorldFileHandler_Plugin_If*>(plugin);
+                }
             }
             else
             {
@@ -212,10 +219,25 @@ int main(int argc, char** argv)
 
             std::string json_asset_path = parameter_node->get_parameter("json_asset_path").as_string();
 
-            for (int i = 0; i < worldLoaders.size(); ++i) {
-                if (objectLoaders.at(i)->canLoadFile(json_asset_path.c_str(), componentPlugins)) {
+
+            if(image_loader_plugin != nullptr)
+            {
+                auto image_plugins = image_loader_plugin->getLoaders();
+                if(image_plugins.size() > 0)
+                {
+                    auto loaded_objects = image_plugins[0]->loadFile(json_asset_path.c_str(), componentPlugins);
+
+                    if(loaded_objects.size())
+                    {
+                        sim.addSimObjects(loaded_objects, false);
+                    }
+                }
+            }
+
+            for (auto object_loader : objectLoaders) {
+                if (object_loader->canLoadFile(json_asset_path.c_str(), componentPlugins)) {
                     QVector < WorldObject * > new_world_objects;
-                    WorldObject *wo = objectLoaders.at(i)->loadFile(json_asset_path.c_str(), componentPlugins);
+                    WorldObject *wo = object_loader->loadFile(json_asset_path.c_str(), componentPlugins);
                     new_world_objects.push_back(wo);
                     sim.addSimObjects(new_world_objects, false);
                     break;

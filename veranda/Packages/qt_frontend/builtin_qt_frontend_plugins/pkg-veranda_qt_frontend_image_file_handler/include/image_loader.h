@@ -12,6 +12,16 @@
 #include "optiondialog.h"
 #include "imageparser.h"
 
+struct ImageParameters
+{
+    bool parameters_ok;
+    uint64_t colorThreshold;
+    double crossThreshold;
+    double scaleY;
+    double scaleX;
+    QColor drawColor;
+    QString imageFilePath;
+};
 /*!
  * \brief File loader for converting image files to a set of triangles
  *
@@ -26,6 +36,7 @@
 class ImageLoader : public WorldLoader_If
 {
 private:
+
     //! Record of the last options dialog presented to the user
     QSharedPointer<ImageOptions> lastOptions;
 
@@ -37,14 +48,23 @@ private:
      */
     QVector<ImageParser::Shape> getShapesFromFile(QString filePath, uint64_t colorThreshold);
 
+    ImageParameters getImageParametersFromJsonFile(QString filePath);
+
+    QVector<WorldObject*> loadWorldUsingJsonFile(QString filePath, QMap<QString, WorldObjectComponent_Factory_If *> plugins);
+
+    QVector<WorldObject*> loadWorldFromImageFile(QString filePath, QMap<QString, WorldObjectComponent_Factory_If *> plugins);
+
+    QVector<WorldObject*> loadWorldFromImageFile( ImageParameters image_parameters, QMap<QString, WorldObjectComponent_Factory_If *> plugins);
+
 public:
+
     /*!
      * \brief Checks if a file can be loaded by this loader
      * \param[in] filePath Path to the file to check
      * \param[in] plugins Map of all plugins by their IID
      * \return true if the file can be loaded by this loader
      */
-    virtual bool canLoadFile(QString filePath, QMap<QString, WorldObjectComponent_Factory_If*> plugins);
+    virtual bool canLoadFile(QString filePath, QMap<QString, WorldObjectComponent_Factory_If*> plugins) override;
 
     /*!
      * \brief Presents the user with a dialog to choose options for loading files
@@ -65,5 +85,8 @@ public:
      * \param[in] plugins Map of all plugins by their IID
      * \return 0 or more WorldObject obstacles representing the dark space in the image
      */
-    virtual QVector<WorldObject*> loadFile(QString filePath, QMap<QString, WorldObjectComponent_Factory_If *> plugins);
+    virtual QVector<WorldObject*> loadFile(QString filePath, QMap<QString, WorldObjectComponent_Factory_If *> plugins) override;
+
+
+
 };
