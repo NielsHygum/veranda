@@ -13,6 +13,7 @@
   <depend>veranda_core_api</depend>
   <depend>veranda_qt_plugin_api</depend>   
   <depend>veranda_builtin_sensors</depend>
+  <depend>veranda_builtin_perception</depend>
   <depend>veranda_builtin_wheels</depend>
   <depend>veranda_builtin_shapes</depend>
 
