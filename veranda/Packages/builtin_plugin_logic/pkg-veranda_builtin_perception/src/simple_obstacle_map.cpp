@@ -162,19 +162,29 @@ void SimpleObstacleMap::_worldTicked(const double dt)
 
                 }
 
-            tf2::Quaternion body_orientation;
-            body_orientation.setRPY( 0.0f, 0.0, sensorBody->GetAngle() );
+          tf2::Quaternion body_orientation;
 
-            data->info.origin.position.x = map_origo_veranda_frame_x;
-            data->info.origin.position.y = map_origo_veranda_frame_y;
-            data->info.origin.position.z = 0.0;
+            if(use_veranda_frame.get().toBool())
+            {
+              body_orientation.setRPY( 0.0f, 0.0, sensorBody->GetAngle() );
 
+              data->info.origin.position.x = map_origo_veranda_frame_x;
+              data->info.origin.position.y = map_origo_veranda_frame_y;
+              data->info.origin.position.z = 0.0;
 
+            } else {
+              body_orientation.setRPY( 0.0f, 0.0f, 0.0f);
 
-            data->info.origin.orientation.x = body_orientation.x();
-            data->info.origin.orientation.y = body_orientation.y();
-            data->info.origin.orientation.z = body_orientation.z();
-            data->info.origin.orientation.w = body_orientation.w();
+              data->info.origin.position.x = map_origo_body_frame_x;
+              data->info.origin.position.y = map_origo_body_frame_y;
+              data->info.origin.position.z = 0.0;
+            }
+
+          data->info.origin.orientation.x = body_orientation.x();
+          data->info.origin.orientation.y = body_orientation.y();
+          data->info.origin.orientation.z = body_orientation.z();
+          data->info.origin.orientation.w = body_orientation.w();
+
 
             if(_sendChannel)
             {

@@ -27,13 +27,17 @@ std::shared_ptr<rclcpp::Node> _rosNode;
 //! ROS channel to publish Occupancy Grid messages on
 rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr _sendChannel;
 
+//! Property: Flag for if the wheel can be driven or not
+Property use_veranda_frame = Property(PropertyInfo(false, true, false, PropertyInfo::BOOL, "Use veranda frame. Body frame if false"),
+                            QVariant(false), &Property::bool_validator);
+
 //! Property: ROS channel to publish on
 Property output_channel = Property(PropertyInfo(false, true, false, PropertyInfo::STRING,
                                                 "Output channel for obstacle map messages"), "");
 
 //! Property: ROS channel to publish on
 Property map_frame_id = Property(PropertyInfo(false, true, false, PropertyInfo::STRING,
-                                                "Frame id"), "map");
+                                                "Frame id"), "B");
 
 //! Property: Rate of publishing messages
 Property pub_rate = Property(PropertyInfo(false, true, false, PropertyInfo::DOUBLE, "map rate (hz)"),
@@ -83,6 +87,7 @@ Property min_perception_height = Property(PropertyInfo(false, true, false, Prope
 #define pview(a) QSharedPointer<PropertyView>(new PropertyView(a))
 //! Mapping of lidar propertys by their identifiers
 QMap<QString, QSharedPointer<PropertyView>> _properties{
+        {"use_veranda_frame",pview(&use_veranda_frame)},
         {"channels/occupancy_map", pview(&output_channel)},
         {"map_frame_id", pview(&map_frame_id)},
         {"map_rate", pview(&pub_rate)},
