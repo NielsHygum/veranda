@@ -121,10 +121,7 @@ void SimpleObstacleMap::_worldTicked(const double dt)
             float body_position_veranda_frame_x = sensorBody->GetPosition().x;
             float body_position_veranda_frame_y = sensorBody->GetPosition().y;
 
-            float body_yaw = sensorBody->GetAngle();
-
-            float map_origo_veranda_frame_x = body_position_veranda_frame_x + map_origo_body_frame_x * cos(body_yaw) - map_origo_body_frame_y * sin(body_yaw);
-            float map_origo_veranda_frame_y = body_position_veranda_frame_y + map_origo_body_frame_x * sin(body_yaw) + map_origo_body_frame_y * cos(body_yaw);
+            float body_yaw = 0.0f;//sensorBody->GetAngle();
 
             if(data->data.size() != map_cols*map_rows)
             {
@@ -137,11 +134,11 @@ void SimpleObstacleMap::_worldTicked(const double dt)
                     float cell_center_body_frame_x = map_origo_body_frame_x + (row+0.5f)*cell_size_;
                     float cell_center_body_frame_y = map_origo_body_frame_y + (col+0.5f)*cell_size_;
 
+                    size_t array_index = col*map_cols+row;
+
                     if((fabs(cell_center_body_frame_x) <= min_perception_range_x) and (fabs(cell_center_body_frame_y) <= min_perception_range_y))
                     {
-
-                        data->data[col*map_cols+row] = 0;
-
+                        data->data[array_index] = 0;
                     } else {
 
                         float cell_center_veranda_frame_x = body_position_veranda_frame_x + cell_center_body_frame_x * cos(body_yaw) - cell_center_body_frame_y * sin(body_yaw);
@@ -155,7 +152,7 @@ void SimpleObstacleMap::_worldTicked(const double dt)
 
                         bool cell_collision = querry_callback_.hasCollision(_world, area_of_collision);
 
-                        data->data[col*map_cols+row] = cell_collision? 100 : 0;
+                        data->data[array_index] = cell_collision? 100 : 0;
                     }
 
 
@@ -164,21 +161,11 @@ void SimpleObstacleMap::_worldTicked(const double dt)
 
           tf2::Quaternion body_orientation;
 
-            if(use_veranda_frame.get().toBool())
-            {
-              body_orientation.setRPY( 0.0f, 0.0, sensorBody->GetAngle() );
+          body_orientation.setRPY( 0.0f, 0.0f, 0.0f);
 
-              data->info.origin.position.x = map_origo_veranda_frame_x;
-              data->info.origin.position.y = map_origo_veranda_frame_y;
-              data->info.origin.position.z = 0.0;
-
-            } else {
-              body_orientation.setRPY( 0.0f, 0.0f, 0.0f);
-
-              data->info.origin.position.x = map_origo_body_frame_x;
-              data->info.origin.position.y = map_origo_body_frame_y;
-              data->info.origin.position.z = 0.0;
-            }
+          data->info.origin.position.x = map_origo_body_frame_x;
+          data->info.origin.position.y = map_origo_body_frame_y;
+          data->info.origin.position.z = 0.0;
 
           data->info.origin.orientation.x = body_orientation.x();
           data->info.origin.orientation.y = body_orientation.y();
@@ -194,54 +181,6 @@ void SimpleObstacleMap::_worldTicked(const double dt)
 
         }
     }
-
-
-
-    /*
-    if(sensorBody)
-    {
-        _timeSinceScan += dt;
-        double pr = pub_rate.get().toDouble();
-
-        if(pr > 0 && _timeSinceScan > 1.0/pr)
-        {
-            double curr_angle = data->angle_min;
-            double scan_radius = radius.get().toDouble();
-
-            data->range_min = scan_radius;
-            data->range_max = 0;
-
-            b2Vec2 worldOrigin = sensorBody->GetPosition();
-            for(int i=0; i<scan_image.size(); i++, curr_angle += data->angle_increment)
-            {
-                b2Vec2 localEndpoint = _getRayPoint(curr_angle, scan_radius);
-                b2Vec2 worldEndpoint = sensorBody->GetWorldPoint(localEndpoint);
-
-                QPair<b2Vec2, double> rayCastResult = _rayCaster.rayCast(_world, worldOrigin, worldEndpoint, -objectId);
-
-                b2EdgeShape* thisLine = dynamic_cast<b2EdgeShape*>(scan_image[i]);
-                thisLine->m_vertex2 = sensorBody->GetLocalPoint(rayCastResult.first);
-
-                data->ranges[i] = rayCastResult.second;
-
-                if(data->ranges[i] >= 0)
-                    data->range_min = std::min(data->ranges[i], data->range_min);
-
-                if(data->ranges[i] <= scan_radius)
-                    data->range_max = std::max(data->ranges[i], data->range_max);
-            }
-
-            if(_sendChannel)
-            {
-                _sendChannel->publish(*data);
-            }
-
-            //Force lines to be redrawn
-            scan_model->forceDraw();
-
-            _timeSinceScan = 0;
-        }
-    }*/
 }
 
 
