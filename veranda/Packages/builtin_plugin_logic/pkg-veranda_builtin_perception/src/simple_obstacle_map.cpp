@@ -77,8 +77,6 @@ WorldObjectComponent *SimpleObstacleMap::_clone(QObject *newParent)
 
 void SimpleObstacleMap::setMapHeader()
 {
-
-
     data->header.frame_id = map_frame_id.get().toString().toStdString();
     data->header.stamp = perception_clock_.now();
 
@@ -121,7 +119,7 @@ void SimpleObstacleMap::_worldTicked(const double dt)
             float body_position_veranda_frame_x = sensorBody->GetPosition().x;
             float body_position_veranda_frame_y = sensorBody->GetPosition().y;
 
-            float body_yaw = 0.0f;//sensorBody->GetAngle();
+            float body_yaw = map_north_oriented.get().toBool()? 0.0f : sensorBody->GetAngle();
 
             if(data->data.size() != map_cols*map_rows)
             {
